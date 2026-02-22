@@ -40,7 +40,7 @@ Retrieve data from the Baltic Transparency Dashboard and assess aFRR activation 
 **What is done:**
 - Data requested via official API (JSON export)
 - Time series expanded to uniform resolution
-- Interactive plot: |Imbalance| vs aFRR activation
+- Plot: |Imbalance| vs aFRR activation
 - Quantitative metrics calculated:
   - Total imbalance vs total aFRR
   - Coverage ratio

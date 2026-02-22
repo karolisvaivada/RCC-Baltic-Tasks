@@ -6,6 +6,8 @@ import pandas as pd
 import plotly.graph_objects as go
 import requests
 from lxml import etree
+import plotly.io as pio
+import matplotlib.pyplot as plt
 
 
 def request_data(
@@ -118,60 +120,57 @@ def afrr_assessment_metrics(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def plot_afrr_vs_imbalance_interactive(
-    df: pd.DataFrame,
-    title: str = "aFRR Activation vs System Imbalance",
-) -> None:
+
+def plot_abs_imbalance_vs_afrr(
+    df,
+    title="Absolute Imbalance vs aFRR Activation",
+    save_path=None
+):
     """
-    Plot interactive time-series of imbalance and aFRR activation.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        DataFrame with timestamps, imbalance, and aFRR activation.
-    title : str
-        Plot title.
+    Wide, static Matplotlib plot (GitHub-safe).
+    Shows only once in Jupyter.
     """
-    d = df.copy()
-    d["abs_imbalance"] = d["imbalance"].abs()
 
-    fig = go.Figure()
+    ts_col = "timestamp"
+    afrr_col = next((c for c in df.columns if "afrr" in c.lower()), None)
+    imb_col = next((c for c in df.columns if "imb" in c.lower()), None)
 
-    fig.add_trace(
-        go.Scatter(
-            x=d["timestamp"],
-            y=d["abs_imbalance"],
-            mode="lines",
-            name="|System Imbalance| (MWh)",
-        )
+    abs_imbalance = np.abs(df[imb_col])
+
+    fig, ax1 = plt.subplots(figsize=(18, 6))  
+
+    ax1.plot(
+        df[ts_col],
+        abs_imbalance,
+        color="royalblue",
+        linewidth=1.8,
+        label="Absolute Imbalance (MW)"
     )
+    ax1.set_xlabel("Time (UTC)")
+    ax1.set_ylabel("Absolute Imbalance (MW)", color="royalblue")
+    ax1.tick_params(axis='y', labelcolor="royalblue")
 
-    fig.add_trace(
-        go.Scatter(
-            x=d["timestamp"],
-            y=d["afrr_activation"],
-            mode="lines",
-            name="aFRR Activation (MWh)",
-            yaxis="y2",
-            line=dict(shape="hv"),
-        )
+
+    ax2 = ax1.twinx()
+    ax2.plot(
+        df[ts_col],
+        df[afrr_col],
+        color="crimson",
+        linestyle="--",
+        linewidth=1.6,
+        label="aFRR Activation (MW)"
     )
+    ax2.set_ylabel("aFRR Activation (MW)", color="crimson")
+    ax2.tick_params(axis='y', labelcolor="crimson")
 
-    fig.update_layout(
-        title=title,
-        xaxis_title="Time (UTC)",
-        yaxis=dict(title="|Imbalance| (MWh)"),
-        yaxis2=dict(
-            title="aFRR Activation (MWh)",
-            overlaying="y",
-            side="right",
-        ),
-        hovermode="x unified",
-        template="plotly_white",
-    )
+    fig.suptitle(title, fontsize=14, fontweight="bold")
+    fig.tight_layout()
 
-    
-    return fig
+    if save_path:
+        plt.savefig(save_path, dpi=150)
+
+    plt.show()          
+    plt.close(fig) 
 
 
 def load_xml_tree(xml_path: str) -> etree._ElementTree:
