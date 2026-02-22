@@ -170,7 +170,8 @@ def plot_afrr_vs_imbalance_interactive(
         template="plotly_white",
     )
 
-    fig.show()
+    
+    return fig
 
 
 def load_xml_tree(xml_path: str) -> etree._ElementTree:
