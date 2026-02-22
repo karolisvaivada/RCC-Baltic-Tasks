@@ -1,12 +1,9 @@
 import json
 from typing import Any, Dict, List, Optional
-
 import numpy as np
 import pandas as pd
-import plotly.graph_objects as go
 import requests
 from lxml import etree
-import plotly.io as pio
 import matplotlib.pyplot as plt
 
 

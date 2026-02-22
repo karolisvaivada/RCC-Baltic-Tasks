@@ -49,7 +49,7 @@ Retrieve data from the Baltic Transparency Dashboard and assess aFRR activation 
   - Peak values
 
 **Key outputs:**
-- Interactive Plotly graph
+- Plotly graph
 - Metrics table supporting assessment
 - Short written reasoning inside the notebook
 
